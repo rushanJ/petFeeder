@@ -9,11 +9,24 @@ Router.get("/:device", urlencodedParser, (req, res) => {
      console.log(req.params.id);
     device = req.params.device;
    
-
-    mysqlConnection.query("SELECT `id`, `device`,DATE (`date`) AS `date`, `time`, `status` FROM `shedule` WHERE `device`='" + device + "'", (err, rows, fields) => {
+console.log("SELECT `id`, `device`,DATE (`date`) AS `date`, `time`, `status` FROM `shedule` WHERE `device`='" + device + "'");
+    mysqlConnection.query("SELECT `id`, `device`,concat(date, ' ', time) AS `date`, `status` FROM `shedule` WHERE `device`='" + device + "'", (err, rows, fields) => {
+       // console.log(rows);
         if (!err) res.send(rows);
         else console.log(err)
     })
+})
+
+Router.get("/upcomming/:device", urlencodedParser, (req, res) => {
+
+    console.log(req.params.id);
+   device = req.params.device;
+  
+console.log("SELECT `id`, `device`,DATE (`date`) AS `date`, (HOUR(`time`)*60)+MINUTE(`time`) AS `time`, `status` FROM`shedule` WHERE `status`='WAITING' AND DATE (`date`)=  CURDATE() AND `device`='" + device + "' ORDER BY `time` ASC ");
+   mysqlConnection.query("SELECT `id`, `device`,DATE (`date`) AS `date`, (HOUR(`time`)*60)+MINUTE(`time`) AS `time`, `status` FROM `shedule` WHERE `status`='WAITING' AND DATE (`date`)=  CURDATE() AND `device`='" + device + "' ORDER BY `time` ASC  LIMIT 1", (err, rows, fields) => {
+       if (!err) res.send(rows);
+       else console.log(err)
+   })
 })
 
 Router.post("/", urlencodedParser, (req, res) => {

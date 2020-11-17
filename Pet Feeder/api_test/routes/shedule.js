@@ -9,6 +9,18 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 Router.get("/:device", urlencodedParser, (req, res) => {
 
     //  console.log(req.params.id);
+     device = req.params.device;
+    device = 123;
+
+    mysqlConnection.query("SELECT * FROM `shedule` WHERE `device`='" + device + "'", (err, rows, fields) => {
+        if (!err) res.send(rows);
+        else console.log(err)
+    })
+})
+
+Router.get("/auth:deviceId", urlencodedParser, (req, res) => {
+
+    //  console.log(req.params.id);
     // device = req.params.device;
     device = 123;
 
@@ -18,14 +30,16 @@ Router.get("/:device", urlencodedParser, (req, res) => {
     })
 })
 
-
 Router.post("/", urlencodedParser, (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     device = req.body.device;
     date = req.body.date;
     time = req.body.time;
+    slot1Value = req.body.slot1Value;
+    slot2Value = req.body.slot2Value;
+    slot3Value = req.body.slot3Value;
 
-    mysqlConnection.query("INSERT INTO `shedule` (`id`, `device`, `date`, `time`, `status`) VALUES(NULL, '" + device + "', '" + date + "', '" + time + "', 'WAITING');", (err, rows, fields) => {
+    mysqlConnection.query("INSERT INTO `shedule`(`id`, `device`, `date`, `time`, `slot1Value`, `slot2Value`, `slot3Value`, `status`) VALUES(NULL, '" + device + "', '" + date + "', '" +  slot1Value + "','" + slot2Value + "','" + slot3Value + "', 'WAITING');", (err, rows, fields) => {
         if (!err) {
             response = {
                 success: true,
